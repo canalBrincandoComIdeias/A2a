@@ -1,0 +1,27 @@
+#######################################
+# Syntax Coloring Map For A2a
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1) - Tipos de Dados
+#######################################
+
+A2a 	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2) - Métodos e Funções
+#######################################
+
+begin			KEYWORD2
+pinWireMode		KEYWORD2
+digitalWireWrite	KEYWORD2
+digitalWireRead		KEYWORD2
+analogWireWrite		KEYWORD2
+analogWireRead		KEYWORD2
+varWireWrite		KEYWORD2
+varWireRead		KEYWORD2
+
+#######################################
+# Constants (LITERAL1) - Constantes
+#######################################
+
