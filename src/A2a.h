@@ -4,7 +4,8 @@
 #include <inttypes.h>
 #include "Arduino.h"
 
-#define qtdVar 10       //quantidade de variaveis para integração
+#define qtdVar 10  //quantidade de variaveis para integração
+#define waitWireTimeout 50
 
 class A2a {
   public:
@@ -12,6 +13,12 @@ class A2a {
 	void begin(void);
 	void begin(uint8_t);
 	void begin(int);
+	
+	#if defined(ESP8266)
+       void begin(int sda, int scl);
+       void begin(int sda, int scl, uint8_t address);	
+	#endif
+	
     void pinWireMode(uint8_t, uint8_t, uint8_t);
 	void digitalWireWrite(uint8_t, uint8_t, bool);
 	bool digitalWireRead(uint8_t, uint8_t);
@@ -23,6 +30,7 @@ class A2a {
 	void sendData(void);
 	void onReceive( void (*)(int) );
     void onRequest( void (*)(void) );
+	void scan();
   private:
 	uint8_t porta;
 	uint8_t comando;

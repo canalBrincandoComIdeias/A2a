@@ -20,6 +20,7 @@ analogWireWrite		KEYWORD2
 analogWireRead		KEYWORD2
 varWireWrite		KEYWORD2
 varWireRead		KEYWORD2
+scan  			KEYWORD2
 
 #######################################
 # Constants (LITERAL1) - Constantes

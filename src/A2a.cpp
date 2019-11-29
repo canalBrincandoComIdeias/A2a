@@ -3,7 +3,12 @@
 #include <inttypes.h>
 #include "Arduino.h"
 #include <Wire.h>
-#include <EEPROM.h>
+
+#if defined(__AVR__)
+   #include <EEPROM.h>
+#endif
+
+
 
 A2a::A2a(void) {
 }
@@ -14,11 +19,40 @@ void A2a::begin(void) {
 
 void A2a::begin(uint8_t address) {
 	Wire.begin(address);
+
+    #if defined(__AVR__)		
+		for (int nL=0; nL < NUM_DIGITAL_PINS + NUM_ANALOG_INPUTS; nL++) {
+		  pinMode(nL, EEPROM.read(nL));
+		}
+	#endif
 }
 
 void A2a::begin(int address) {
 	Wire.begin(address);
+	
+	#if defined(__AVR__)		
+		for (int nL=0; nL < NUM_DIGITAL_PINS + NUM_ANALOG_INPUTS; nL++) {
+		  pinMode(nL, EEPROM.read(nL));
+		}
+	
+	#endif
 }
+
+#if defined(ESP8266)
+	void A2a::begin(int sda, int scl) {
+		Wire.begin(sda, scl);
+	}
+
+	void A2a::begin(int sda, int scl, uint8_t address) {
+		Wire.begin(sda, scl, address);	
+	
+        #if defined(__AVR__)	
+			for (int nL=0; nL < NUM_DIGITAL_PINS + NUM_ANALOG_INPUTS; nL++) {
+				pinMode(nL, EEPROM.read(nL));
+			}
+		#endif
+	}
+#endif
 
 void A2a::pinWireMode(uint8_t address, uint8_t porta, uint8_t valor) {
   uint8_t comando = 0;        //comando 0=pinMode
@@ -56,6 +90,7 @@ void A2a::analogWireWrite(uint8_t address, uint8_t porta, uint8_t valor) {
 bool A2a::digitalWireRead(uint8_t address, uint8_t porta) {
   uint8_t comando = 3;        //comando 3=digitalRead
   comando = (comando << 4);
+  static bool lastRet;
     
   Wire.beginTransmission(address); 
   Wire.write(porta);   //porta
@@ -64,8 +99,19 @@ bool A2a::digitalWireRead(uint8_t address, uint8_t porta) {
   
   Wire.requestFrom(address, 1, false);    
   uint8_t rec;
+  
+  unsigned long waitAvailableTimeOut = millis();
+  while (!Wire.available()) { 
+     if ((millis() - waitAvailableTimeOut) > waitWireTimeout) {
+		 break;
+     }		 
+  }
+  
   if (Wire.available()) { 
-     rec = Wire.read();          
+     rec = Wire.read();    
+	 lastRet = rec;
+  } else {
+	 rec = lastRet;
   }
   return rec;  
 }
@@ -73,6 +119,7 @@ bool A2a::digitalWireRead(uint8_t address, uint8_t porta) {
 unsigned int A2a::analogWireRead(uint8_t address, uint8_t porta) {
   uint8_t comando = 4;        //comando 4=analogRead
   comando = (comando << 4);
+  static unsigned int lastRet;
 
   Wire.beginTransmission(address); 
   Wire.write(porta); //porta
@@ -82,10 +129,21 @@ unsigned int A2a::analogWireRead(uint8_t address, uint8_t porta) {
   Wire.requestFrom(address, 2, false);    
 
   unsigned int rec;
+  
+  unsigned long waitAvailableTimeOut = millis();
+  while (!Wire.available()) { 
+     if ((millis() - waitAvailableTimeOut) > waitWireTimeout) {
+		 break;
+     }		 
+  }
+  
   if (Wire.available()) { 
      uint8_t rec1 = Wire.read();          
      uint8_t rec2 = Wire.read();     
-     rec = ((rec2 << 8) | rec1);     
+     rec = ((rec2 << 8) | rec1);   
+	 lastRet = rec;	 
+  } else {
+	 rec = lastRet;
   }
   
   return rec;
@@ -105,6 +163,7 @@ void A2a::varWireWrite(uint8_t address, uint8_t variavel, uint8_t valor) {
 uint8_t A2a::varWireRead(uint8_t address, uint8_t variavel) {
   uint8_t comando = 6;        //comando 6=varRead
   comando = (comando << 4);
+  static uint8_t lastRet;
 
   Wire.beginTransmission(address); 
   Wire.write(variavel); //porta
@@ -114,8 +173,19 @@ uint8_t A2a::varWireRead(uint8_t address, uint8_t variavel) {
   Wire.requestFrom(address, 2, false);    
 
   unsigned int rec;
+  
+  unsigned long waitAvailableTimeOut = millis();
+  while (!Wire.available()) { 
+     if ((millis() - waitAvailableTimeOut) > waitWireTimeout) {
+		 break;
+     }		 
+  }
+  
   if (Wire.available()) { 
      rec = Wire.read();          
+     lastRet = rec;	 
+  } else {
+	 rec = lastRet;
   }
     
   return rec;
@@ -143,7 +213,9 @@ void A2a::receiveData() {
   switch (comando) {
      case 0: 
         pinMode(porta, valor);
-        EEPROM.write(porta, valor);
+		#if defined(__AVR__)
+			EEPROM.write(porta, valor);
+		#endif
         break;
      case 1:
         digitalWrite(porta, valor);
@@ -183,4 +255,35 @@ void A2a::onReceive( void (*function)(int) )
 void A2a::onRequest( void (*function)(void) )
 {
   Wire.onRequest(function);
+}
+
+void A2a::scan() {
+byte resultCode = 0;
+byte devices = 0;
+byte address;
+	
+   for (address=0; address<128; address++){
+		Wire.beginTransmission(address);
+		resultCode = Wire.endTransmission();
+    
+		if (resultCode == 0){
+			Serial.println();
+			Serial.println(address,HEX);
+			devices++;
+			delay(3000);
+		} else {
+		    Serial.print(".");	
+		}
+		delay(100);
+   }
+   Serial.println();
+    
+   if (devices == 0){
+       Serial.println("No devices found.");
+   } else if (devices == 1) {
+	   Serial.println("Only one device found.");
+   } else {
+	   Serial.print(devices);
+	   Serial.println(" devices found"); 
+   }	   
 }
