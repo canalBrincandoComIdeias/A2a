@@ -11,6 +11,10 @@
 // DEFINIÇÃO DO ENDEREÇO DO SLAVE
 #define endereco 8
 
+// DEFINIÇÃO DAS PORTAS I2C
+#define SDA 0
+#define SCL 2
+
 // DEFINIÇÕES DE PINOS DO SLAVE
 #define pinBotao 3
 #define pinLED   6
@@ -20,8 +24,8 @@
 A2a arduinoSlave;
 
 void setup() {
-  // INICIA A COMUNICAÇÃO ENTRE ARDUINOS
-  arduinoSlave.begin(); 
+  // INICIA A COMUNICAÇÃO ENTRE ESP01 E ARDUINO
+  arduinoSlave.begin(SDA,SCL); 
 
   // ENVIA O pinMode PARA O SLAVE
   arduinoSlave.pinWireMode(endereco, pinBotao, INPUT_PULLUP); 
