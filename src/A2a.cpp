@@ -62,7 +62,8 @@ void A2a::pinWireMode(uint8_t address, uint8_t porta, uint8_t valor) {
   Wire.beginTransmission(address); 
   Wire.write(porta); //porta
   Wire.write(valor); //comando + valor
-  Wire.endTransmission();    
+  Wire.endTransmission();  
+  delay(1);  
 }
 
 void A2a::digitalWireWrite(uint8_t address, uint8_t porta, bool valor) {
@@ -113,6 +114,7 @@ bool A2a::digitalWireRead(uint8_t address, uint8_t porta) {
   } else {
 	 rec = lastRet;
   }
+  delay(10);
   return rec;  
 }
 
@@ -146,6 +148,7 @@ unsigned int A2a::analogWireRead(uint8_t address, uint8_t porta) {
 	 rec = lastRet;
   }
   
+  delay(10);
   return rec;
 }
 
@@ -221,7 +224,9 @@ void A2a::receiveData() {
         digitalWrite(porta, valor);
         break;
      case 2:
-        analogWrite(porta, valor);
+	    #ifndef ESP32
+           analogWrite(porta, valor);
+		#endif
         break;
      case 5:
         varIntegr[porta] = valor;
