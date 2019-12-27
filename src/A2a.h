@@ -31,6 +31,7 @@ class A2a {
 	void onReceive( void (*)(int) );
     void onRequest( void (*)(void) );
 	void scan();
+	uint8_t lastWireError();
   private:
 	uint8_t porta;
 	uint8_t comando;

@@ -98,6 +98,8 @@ bool A2a::digitalWireRead(uint8_t address, uint8_t porta) {
   Wire.write(comando); //comando
   Wire.endTransmission(); 
   
+  delay(1); //DELAY PARA ESP01
+  
   Wire.requestFrom(address, 1, false);    
   uint8_t rec;
   
@@ -114,7 +116,7 @@ bool A2a::digitalWireRead(uint8_t address, uint8_t porta) {
   } else {
 	 rec = lastRet;
   }
-  //delay(10); //DELAY PARA ESP01
+  
   return rec;  
 }
 
@@ -127,6 +129,8 @@ unsigned int A2a::analogWireRead(uint8_t address, uint8_t porta) {
   Wire.write(porta); //porta
   Wire.write(comando); //valor
   Wire.endTransmission();
+  
+  delay(1); //DELAY PARA ESP01
   
   Wire.requestFrom(address, 2, false);    
 
@@ -148,7 +152,6 @@ unsigned int A2a::analogWireRead(uint8_t address, uint8_t porta) {
 	 rec = lastRet;
   }
   
-  //delay(10); //DELAY PARA ESP01
   return rec;
 }
 
@@ -291,4 +294,8 @@ byte address;
 	   Serial.print(devices);
 	   Serial.println(" devices found"); 
    }	   
+}
+
+uint8_t A2a::lastWireError() {
+	return Wire.lastError();
 }
