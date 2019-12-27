@@ -114,7 +114,7 @@ bool A2a::digitalWireRead(uint8_t address, uint8_t porta) {
   } else {
 	 rec = lastRet;
   }
-  delay(10);
+  //delay(10); //DELAY PARA ESP01
   return rec;  
 }
 
@@ -148,7 +148,7 @@ unsigned int A2a::analogWireRead(uint8_t address, uint8_t porta) {
 	 rec = lastRet;
   }
   
-  delay(10);
+  //delay(10); //DELAY PARA ESP01
   return rec;
 }
 
