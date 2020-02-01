@@ -116,7 +116,6 @@ bool A2a::digitalWireRead(uint8_t address, uint8_t porta) {
   } else {
 	 rec = lastRet;
   }
-  
   return rec;  
 }
 
@@ -166,6 +165,11 @@ void A2a::varWireWrite(uint8_t address, uint8_t variavel, uint8_t valor) {
   Wire.endTransmission();    
 }
 
+void A2a::varWireWrite(uint8_t variavel, uint8_t valor) {
+  varIntegr[variavel] = valor;  
+}
+
+
 uint8_t A2a::varWireRead(uint8_t address, uint8_t variavel) {
   uint8_t comando = 6;        //comando 6=varRead
   comando = (comando << 4);
@@ -195,6 +199,10 @@ uint8_t A2a::varWireRead(uint8_t address, uint8_t variavel) {
   }
     
   return rec;
+}
+
+uint8_t A2a::varWireRead(uint8_t variavel) {
+  return varIntegr[variavel];
 }
 
 void A2a::receiveData() {
@@ -297,5 +305,5 @@ byte address;
 }
 
 uint8_t A2a::lastWireError() {
-	return Wire.lastError();
+   return Wire.lastError();
 }

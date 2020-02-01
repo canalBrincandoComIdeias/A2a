@@ -25,13 +25,14 @@ class A2a {
 	void analogWireWrite(uint8_t, uint8_t, uint8_t);
 	unsigned int analogWireRead(uint8_t, uint8_t);
 	void varWireWrite(uint8_t, uint8_t, uint8_t);
+	void varWireWrite(uint8_t, uint8_t);
 	uint8_t varWireRead(uint8_t, uint8_t);
+	uint8_t varWireRead(uint8_t);
 	void receiveData(void);
 	void sendData(void);
 	void onReceive( void (*)(int) );
     void onRequest( void (*)(void) );
 	void scan();
-	uint8_t lastWireError();
   private:
 	uint8_t porta;
 	uint8_t comando;
