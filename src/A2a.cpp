@@ -305,5 +305,7 @@ byte address;
 }
 
 uint8_t A2a::lastWireError() {
-   return Wire.lastError();
+	#ifdef ESP32
+		return Wire.lastError();
+	#endif ESP32
 }
