@@ -34,7 +34,7 @@ class A2a {
     void onRequest( void (*)(void) );
 	void scan();
 	
-	uint8_t A2a::lastWireError()
+	uint8_t A2a::lastWireError();
 	
   private:
 	uint8_t porta;
